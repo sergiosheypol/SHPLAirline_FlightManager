@@ -2,6 +2,8 @@ package com.shpl.flightbooking.entity;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,11 @@ import java.time.LocalDateTime;
 public class BookingEntity {
 
     @Id
-    private BookingKey key;
+    @DynamoDBHashKey
+    private String pnr;
+
+    @DynamoDBRangeKey
+    private String flightId;
 
     @DynamoDBAttribute
     private String price;
