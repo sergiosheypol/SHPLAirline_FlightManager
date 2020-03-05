@@ -1,7 +1,9 @@
 package com.shpl.flightbooking.service;
 
-import com.shpl.flightbooking.dto.FlightDto;
-import com.shpl.flightbooking.entity.FlightEntity;
+import com.shpl.flightbooking.dto.FlightInfoDto;
+import com.shpl.flightbooking.dto.FlightKeysDto;
+import com.shpl.flightbooking.dto.FlightPushDto;
+import com.shpl.flightbooking.model.Flight;
 import com.shpl.flightbooking.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,40 +14,25 @@ import org.springframework.stereotype.Service;
 public class FlightService {
     private final FlightRepository flightRepository;
 
-    public FlightEntity saveFlight(FlightDto flightDto) {
-        return flightRepository.save(mapFlightEntity(flightDto));
+    public void saveFlight(FlightPushDto flightPushDto) {
+        flightRepository.save(flightPushDto);
     }
 
-    public FlightDto getFlight(String id) {
-        return mapFlightDto(flightRepository.findById(id).orElse(FlightEntity.builder().build()));
+    public FlightInfoDto findFlight(FlightKeysDto flightKeysDto) {
+        return mapFlightDto(flightRepository.findFlight(flightKeysDto));
     }
-
-
-    private FlightEntity mapFlightEntity(FlightDto flightDto) {
-        return FlightEntity.builder()
-                .id(flightDto.getId())
-                .iataCode(flightDto.getIataCode())
-                .arrivalAirport(flightDto.getArrivalAirport())
-                .departureAirport(flightDto.getDepartureAirport())
-                .arrivalDate(flightDto.getArrivalDate())
-                .departureDate(flightDto.getDepartureDate())
-                .connectingAirport(flightDto.getConnectingAirport())
-                .soldSeats(flightDto.getSoldSeats())
-                .totalSeatsAvailable(flightDto.getTotalSeatsAvailable())
-                .build();
-    }
-
-    private FlightDto mapFlightDto(FlightEntity flightEntity) {
-        return FlightDto.builder()
-                .arrivalAirport(flightEntity.getArrivalAirport())
-                .arrivalDate(flightEntity.getArrivalDate())
-                .connectingAirport(flightEntity.getConnectingAirport())
-                .departureAirport(flightEntity.getDepartureAirport())
-                .departureDate(flightEntity.getDepartureDate())
-                .iataCode(flightEntity.getIataCode())
-                .id(flightEntity.getId())
-                .soldSeats(flightEntity.getSoldSeats())
-                .totalSeatsAvailable(flightEntity.getTotalSeatsAvailable())
+    
+    private FlightInfoDto mapFlightDto(Flight flight) {
+        return FlightInfoDto.builder()
+                .arrivalAirport(flight.getArrivalAirport())
+                .arrivalDate(flight.getArrivalDate())
+                .connectingAirport(flight.getConnectingAirport())
+                .departureAirport(flight.getDepartureAirport())
+                .departureDate(flight.getDepartureDate())
+                .iataCode(flight.getIataCode())
+                .id(flight.getId())
+                .soldSeats(flight.getSoldSeats())
+                .totalSeatsAvailable(flight.getTotalSeatsAvailable())
                 .build();
     }
 
