@@ -1,6 +1,6 @@
 package com.shpl.flightbooking.service;
 
-import com.shpl.flightbooking.dto.FlightInfoDto;
+import com.shpl.flightbooking.dto.FlightInfoResponseDto;
 import com.shpl.flightbooking.dto.FlightKeysDto;
 import com.shpl.flightbooking.dto.FlightPushDto;
 import com.shpl.flightbooking.model.Flight;
@@ -18,12 +18,12 @@ public class FlightService {
         flightRepository.save(flightPushDto);
     }
 
-    public FlightInfoDto findFlight(FlightKeysDto flightKeysDto) {
+    public FlightInfoResponseDto findFlight(FlightKeysDto flightKeysDto) {
         return mapFlightDto(flightRepository.findFlight(flightKeysDto));
     }
-    
-    private FlightInfoDto mapFlightDto(Flight flight) {
-        return FlightInfoDto.builder()
+
+    private FlightInfoResponseDto mapFlightDto(Flight flight) {
+        return FlightInfoResponseDto.builder()
                 .arrivalAirport(flight.getArrivalAirport())
                 .arrivalDate(flight.getArrivalDate())
                 .connectingAirport(flight.getConnectingAirport())

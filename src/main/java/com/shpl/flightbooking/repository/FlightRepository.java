@@ -2,6 +2,7 @@ package com.shpl.flightbooking.repository;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.shpl.flightbooking.config.AwsDynamoProperties;
 import com.shpl.flightbooking.dto.FlightKeysDto;
 import com.shpl.flightbooking.dto.FlightPushDto;
 import com.shpl.flightbooking.model.Flight;
@@ -11,7 +12,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +33,11 @@ public class FlightRepository {
 
     public Flight findFlight(FlightKeysDto flightKeysDto) {
         return generateFlightFromMap(dynamoDB
-                .getItem(awsDynamoProperties.getTableName(), getKey(flightKeysDto.getId(), flightKeysDto.getIataCode()))
+                .getItem(awsDynamoProperties.getTableName(), getFlightKey(flightKeysDto.getId(), flightKeysDto.getIataCode()))
                 .getItem());
     }
 
-    private Map<String, AttributeValue> getKey(String id, String iataCode) {
+    private Map<String, AttributeValue> getFlightKey(String id, String iataCode) {
         Map<String, AttributeValue> keyMap = new HashMap<>();
         keyMap.put("id", new AttributeValue(id));
         keyMap.put("iataCode", new AttributeValue(iataCode));

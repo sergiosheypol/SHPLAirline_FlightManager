@@ -1,4 +1,4 @@
-package com.shpl.flightbooking.repository;
+package com.shpl.flightbooking.config;
 
 import lombok.Getter;
 import lombok.Setter;

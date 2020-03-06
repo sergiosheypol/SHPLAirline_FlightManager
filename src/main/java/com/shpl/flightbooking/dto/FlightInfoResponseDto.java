@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlightInfoDto {
+public class FlightInfoResponseDto {
     private String id;
     private String iataCode;
     private String departureAirport;

@@ -1,6 +1,6 @@
 package com.shpl.flightbooking.controller;
 
-import com.shpl.flightbooking.dto.FlightInfoDto;
+import com.shpl.flightbooking.dto.FlightInfoResponseDto;
 import com.shpl.flightbooking.dto.FlightKeysDto;
 import com.shpl.flightbooking.dto.FlightPushDto;
 import com.shpl.flightbooking.service.FlightService;
@@ -31,7 +31,7 @@ public class FlightController {
     @GetMapping(value = "/getFlight", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public FlightInfoDto getFlight(@RequestBody final FlightKeysDto keys) {
+    public FlightInfoResponseDto getFlight(@RequestBody final FlightKeysDto keys) {
         return flightService.findFlight(keys);
     }
 }
