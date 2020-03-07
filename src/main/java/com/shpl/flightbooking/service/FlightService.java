@@ -7,6 +7,9 @@ import com.shpl.flightbooking.model.Flight;
 import com.shpl.flightbooking.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -18,26 +21,24 @@ public class FlightService {
         flightRepository.save(flightPushDto);
     }
 
-    public FlightInfoResponseDto findFlight(FlightKeysDto flightKeysDto) {
-        return mapFlightDto(flightRepository.findFlight(flightKeysDto));
+    public Mono<FlightInfoResponseDto> findFlight(FlightKeysDto flightKeysDto) {
+        return flightRepository.findFlight(flightKeysDto)
+                .map(this::mapFlightDto)
+                .defaultIfEmpty(FlightInfoResponseDto.builder().build());
     }
 
     private FlightInfoResponseDto mapFlightDto(Flight flight) {
         return FlightInfoResponseDto.builder()
                 .arrivalAirport(flight.getArrivalAirport())
-                .arrivalDate(flight.getArrivalDate())
+                .arrivalDate(LocalDateTime.parse(flight.getArrivalDate()))
                 .connectingAirport(flight.getConnectingAirport())
                 .departureAirport(flight.getDepartureAirport())
-                .departureDate(flight.getDepartureDate())
+                .departureDate(LocalDateTime.parse(flight.getDepartureDate()))
                 .iataCode(flight.getIataCode())
                 .id(flight.getId())
                 .soldSeats(flight.getSoldSeats())
                 .totalSeatsAvailable(flight.getTotalSeatsAvailable())
                 .build();
     }
-
-
-
-
 
 }

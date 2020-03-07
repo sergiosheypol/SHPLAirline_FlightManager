@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import reactor.core.publisher.Mono;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,9 +30,9 @@ public class FlightController {
     }
 
     @GetMapping(value = "/getFlight", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public FlightInfoResponseDto getFlight(@RequestBody final FlightKeysDto keys) {
+    // Add @Valid annotation
+    public Mono<FlightInfoResponseDto> getFlight(final FlightKeysDto keys) {
         return flightService.findFlight(keys);
     }
 }

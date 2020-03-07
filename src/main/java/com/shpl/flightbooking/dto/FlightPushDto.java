@@ -19,5 +19,4 @@ public class FlightPushDto {
     private String connectingAirport;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
-    private int totalSeatsAvailable;
 }

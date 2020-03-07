@@ -1,6 +1,7 @@
 package com.shpl.flightbooking.repository;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.shpl.flightbooking.config.AwsDynamoProperties;
 import com.shpl.flightbooking.dto.FlightKeysDto;
@@ -10,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,26 +24,20 @@ public class FlightRepository {
 
     private final AwsDynamoProperties awsDynamoProperties;
 
-    private final AmazonDynamoDB dynamoDB;
+    private final AmazonDynamoDBAsync dynamoDB;
+
+    private final DynamoDBMapper mapper;
 
     @Value("${aircraft.passengers}")
     private String nPassengers;
 
     public void save(FlightPushDto flightPushDto) {
-        dynamoDB.putItem(awsDynamoProperties.getTableName(), generateAttributesMap(flightPushDto));
+        dynamoDB.putItemAsync(awsDynamoProperties.getTableName(), generateAttributesMap(flightPushDto));
     }
 
-    public Flight findFlight(FlightKeysDto flightKeysDto) {
-        return generateFlightFromMap(dynamoDB
-                .getItem(awsDynamoProperties.getTableName(), getFlightKey(flightKeysDto.getId(), flightKeysDto.getIataCode()))
-                .getItem());
-    }
-
-    private Map<String, AttributeValue> getFlightKey(String id, String iataCode) {
-        Map<String, AttributeValue> keyMap = new HashMap<>();
-        keyMap.put("id", new AttributeValue(id));
-        keyMap.put("iataCode", new AttributeValue(iataCode));
-        return keyMap;
+    public Mono<Flight> findFlight(FlightKeysDto flightKeysDto) {
+        return Mono.fromCallable(() -> mapper.load(Flight.class, flightKeysDto.getId(), flightKeysDto.getIataCode()))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private Map<String, AttributeValue> generateAttributesMap(FlightPushDto flightPushDto) {
@@ -58,23 +54,4 @@ public class FlightRepository {
         map.put("passengersPnr", new AttributeValue().withSS("ER45TY"));
         return map;
     }
-
-    private Flight generateFlightFromMap(Map<String, AttributeValue> flightMap) {
-
-        return Flight.builder()
-                .id(flightMap.get("id").getS())
-                .iataCode(flightMap.get("iataCode").getS())
-                .departureAirport(flightMap.get("departureAirport").getS())
-                .arrivalAirport(flightMap.get("arrivalAirport").getS())
-                .connectingAirport(flightMap.get("connectingAirport").getS())
-                .departureDate(LocalDateTime.parse(flightMap.get("departureDate").getS()))
-                .arrivalDate(LocalDateTime.parse(flightMap.get("arrivalDate").getS()))
-                .totalSeatsAvailable(Integer.parseInt(flightMap.get("totalSeatsAvailable").getN()))
-                .soldSeats(Integer.parseInt(flightMap.get("soldSeats").getN()))
-                .passengersPnr(flightMap.get("passengersPnr").getSS())
-                .build();
-    }
-
-
-
 }
