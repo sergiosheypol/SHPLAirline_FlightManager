@@ -38,6 +38,7 @@ public class FlightControllerITTest {
     @Before
     public void setUp() {
         AwsDynamoDBTestConfig.loadTables(dynamoDB);
+        AwsDynamoDBTestConfig.loadTestFlight(dynamoDB);
     }
 
     @After
@@ -60,15 +61,6 @@ public class FlightControllerITTest {
     @Test
     public void shouldGetFlight() {
 
-        this.webTestClient
-                .post()
-                .uri("/flight/pushFlight")
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(Mono.just(FlightControllerData.testFlight), FlightPushDto.class)
-                .exchange()
-                .expectStatus()
-                .isCreated();
-
         FlightInfoResponseDto responseBody = this.webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -80,7 +72,7 @@ public class FlightControllerITTest {
                 .expectBody(FlightInfoResponseDto.class)
                 .returnResult()
                 .getResponseBody();
-        
+
         assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight.getId());
 
 

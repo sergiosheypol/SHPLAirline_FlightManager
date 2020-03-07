@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.shpl.flightbooking.ITtests.FlightControllerData;
 import com.shpl.flightbooking.dto.FlightPushDto;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +49,10 @@ public class AwsDynamoDBTestConfig {
 
     public static void resetTables(AmazonDynamoDB dynamoDB) {
         dynamoDB.deleteTable(SHPL_FLIGHTS_NAME);
+    }
+
+    public static void loadTestFlight(AmazonDynamoDB dynamoDB) {
+        dynamoDB.putItem(SHPL_FLIGHTS_NAME, generateAttributesMap(FlightControllerData.testFlight));
     }
 
     private static Map<String, AttributeValue> generateAttributesMap(FlightPushDto flightPushDto) {
