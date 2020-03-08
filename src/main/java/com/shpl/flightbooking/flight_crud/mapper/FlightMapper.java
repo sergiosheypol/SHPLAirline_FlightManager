@@ -1,8 +1,8 @@
-package com.shpl.flightbooking.flight.mapper;
+package com.shpl.flightbooking.flight_crud.mapper;
 
-import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.flight.dto.FlightPushDto;
-import com.shpl.flightbooking.flight.entity.Flight;
+import com.shpl.flightbooking.flight_crud.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
+import com.shpl.flightbooking.flight_crud.entity.Flight;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,20 @@ public class FlightMapper {
                 .iataCode(flightPushDto.getIataCode())
                 .id(flightPushDto.getId())
                 .soldSeats(0)
+                .totalSeatsAvailable(Integer.parseInt(nPassengers))
+                .connectingAirport(flightPushDto.getConnectingAirport())
+                .departureAirport(flightPushDto.getDepartureAirport())
+                .arrivalAirport(flightPushDto.getArrivalAirport())
+                .arrivalDate(flightPushDto.getArrivalDate().toString())
+                .departureDate(flightPushDto.getDepartureDate().toString())
+                .build();
+    }
+
+    public Flight flightPushDtoToFlight(FlightPushDto flightPushDto, int soldSeats) {
+        return Flight.builder()
+                .iataCode(flightPushDto.getIataCode())
+                .id(flightPushDto.getId())
+                .soldSeats(soldSeats)
                 .totalSeatsAvailable(Integer.parseInt(nPassengers))
                 .connectingAirport(flightPushDto.getConnectingAirport())
                 .departureAirport(flightPushDto.getDepartureAirport())

@@ -1,24 +1,24 @@
-package com.shpl.flightbooking.flight.controller;
+package com.shpl.flightbooking.flight_crud.controller;
 
-import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.flight.dto.FlightKeysDto;
-import com.shpl.flightbooking.flight.dto.FlightPushDto;
-import com.shpl.flightbooking.flight.service.FlightService;
+import com.shpl.flightbooking.flight_crud.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight_crud.dto.FlightKeysDto;
+import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
+import com.shpl.flightbooking.flight_crud.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/flight")
 public class FlightController {

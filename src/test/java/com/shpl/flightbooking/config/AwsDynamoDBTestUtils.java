@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.shpl.flightbooking.ITtests.FlightControllerData;
-import com.shpl.flightbooking.flight.mapper.FlightMapper;
+import com.shpl.flightbooking.flight_crud.mapper.FlightMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
