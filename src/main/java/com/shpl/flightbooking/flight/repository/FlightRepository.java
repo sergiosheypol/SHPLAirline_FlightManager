@@ -1,8 +1,8 @@
-package com.shpl.flightbooking.flight_crud.repository;
+package com.shpl.flightbooking.flight.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.shpl.flightbooking.flight_crud.dto.FlightKeysDto;
-import com.shpl.flightbooking.flight_crud.entity.Flight;
+import com.shpl.flightbooking.flight.dto.FlightKeysDto;
+import com.shpl.flightbooking.flight.entity.Flight;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;

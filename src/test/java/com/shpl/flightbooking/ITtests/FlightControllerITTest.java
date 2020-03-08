@@ -4,9 +4,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.shpl.flightbooking.FlightbookingApplication;
 import com.shpl.flightbooking.config.AwsDynamoDBTestConfig;
 import com.shpl.flightbooking.config.AwsDynamoDBTestUtils;
-import com.shpl.flightbooking.flight_crud.controller.FlightController;
-import com.shpl.flightbooking.flight_crud.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
+import com.shpl.flightbooking.flight.controller.FlightController;
+import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight.dto.FlightPushDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,8 +71,6 @@ public class FlightControllerITTest {
 
         assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight2.getId());
         assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight2.getIataCode());
-        assertThat(responseBody.getSoldSeats()).isEqualTo(0);
-        assertThat(responseBody.getTotalSeatsAvailable()).isEqualTo(198);
     }
 
     @Test
@@ -110,8 +108,6 @@ public class FlightControllerITTest {
 
         assertThat(responseBody.getId()).isNull();
         assertThat(responseBody.getIataCode()).isNull();
-        assertThat(responseBody.getSoldSeats()).isEqualTo(0);
-        assertThat(responseBody.getTotalSeatsAvailable()).isEqualTo(0);
     }
 
     @Test
@@ -185,8 +181,6 @@ public class FlightControllerITTest {
 
         assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight2.getId());
         assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight2.getIataCode());
-        assertThat(responseBody.getSoldSeats()).isEqualTo(0);
-        assertThat(responseBody.getTotalSeatsAvailable()).isEqualTo(198);
     }
 
     @Test
@@ -222,9 +216,5 @@ public class FlightControllerITTest {
 
         assertThat(emptyResponse.getId()).isNull();
         assertThat(emptyResponse.getIataCode()).isNull();
-        assertThat(emptyResponse.getSoldSeats()).isEqualTo(0);
-        assertThat(emptyResponse.getTotalSeatsAvailable()).isEqualTo(0);
-
-
     }
 }

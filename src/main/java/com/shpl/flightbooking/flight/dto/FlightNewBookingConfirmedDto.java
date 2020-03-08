@@ -1,4 +1,4 @@
-package com.shpl.flightbooking.flight_crud.dto;
+package com.shpl.flightbooking.flight.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

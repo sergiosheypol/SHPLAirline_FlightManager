@@ -1,9 +1,9 @@
-package com.shpl.flightbooking.flight_crud.controller;
+package com.shpl.flightbooking.flight.controller;
 
-import com.shpl.flightbooking.flight_crud.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.flight_crud.dto.FlightKeysDto;
-import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
-import com.shpl.flightbooking.flight_crud.service.FlightService;
+import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight.dto.FlightKeysDto;
+import com.shpl.flightbooking.flight.dto.FlightPushDto;
+import com.shpl.flightbooking.flight.service.FlightCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,33 +23,33 @@ import javax.validation.Valid;
 @RequestMapping("/flight")
 public class FlightController {
 
-    private final FlightService flightService;
+    private final FlightCrudService flightCrudService;
 
     @PostMapping("/pushFlight")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Mono<FlightInfoResponseDto> pushFlight(@Valid @RequestBody FlightPushDto flightPushDto) {
-        return flightService.saveFlight(flightPushDto);
+        return flightCrudService.saveFlight(flightPushDto);
     }
 
     @PostMapping("/updateFlight")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public Mono<FlightInfoResponseDto> updateFlight(@Valid @RequestBody FlightPushDto flightPushDto) {
-        return flightService.saveFlight(flightPushDto);
+        return flightCrudService.saveFlight(flightPushDto);
     }
 
     @GetMapping(value = "/getFlight", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Mono<FlightInfoResponseDto> getFlight(@Valid final FlightKeysDto keys) {
-        return flightService.findFlight(keys);
+        return flightCrudService.findFlight(keys);
     }
 
     @PostMapping("/deleteFlight")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Mono<FlightInfoResponseDto> deleteFlight(@Valid @RequestBody final FlightKeysDto keys) {
-        return flightService.deleteFlight(keys);
+        return flightCrudService.deleteFlight(keys);
     }
 
 }

@@ -1,10 +1,11 @@
-package com.shpl.flightbooking.flight_crud.service;
+package com.shpl.flightbooking.flight.service;
 
-import com.shpl.flightbooking.flight_crud.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.flight_crud.dto.FlightKeysDto;
-import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
-import com.shpl.flightbooking.flight_crud.mapper.FlightMapper;
-import com.shpl.flightbooking.flight_crud.repository.FlightRepository;
+import com.shpl.flightbooking.flight.dto.FlightDto;
+import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight.dto.FlightKeysDto;
+import com.shpl.flightbooking.flight.dto.FlightPushDto;
+import com.shpl.flightbooking.flight.mapper.FlightMapper;
+import com.shpl.flightbooking.flight.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class FlightService {
+public class FlightCrudService {
     private final FlightRepository flightRepository;
 
     private final FlightMapper flightMapper;
@@ -33,5 +34,11 @@ public class FlightService {
         return flightRepository.delete(flightKeysDto)
                 .map(flightMapper::flightToFlightInfoResponseDto)
                 .defaultIfEmpty(FlightInfoResponseDto.builder().build());
+    }
+
+    public Mono<FlightDto> updateNewBooking(FlightDto flightDto) {
+        return flightRepository.saveOrUpdate(flightMapper.flightDtoToFlight(flightDto))
+                .map(flightMapper::flightToFlightDto)
+                .defaultIfEmpty(FlightDto.builder().build());
     }
 }

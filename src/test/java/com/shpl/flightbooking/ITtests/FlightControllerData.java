@@ -1,6 +1,6 @@
 package com.shpl.flightbooking.ITtests;
 
-import com.shpl.flightbooking.flight_crud.dto.FlightPushDto;
+import com.shpl.flightbooking.flight.dto.FlightPushDto;
 
 import java.time.LocalDateTime;
 
