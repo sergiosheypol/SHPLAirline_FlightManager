@@ -1,4 +1,4 @@
-package com.shpl.flightbooking.booking.model;
+package com.shpl.flightbooking.booking.entity;
 
 
 import lombok.AllArgsConstructor;

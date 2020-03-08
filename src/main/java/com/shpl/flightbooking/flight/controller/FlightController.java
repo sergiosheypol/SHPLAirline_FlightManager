@@ -51,4 +51,5 @@ public class FlightController {
     public Mono<FlightInfoResponseDto> deleteFlight(@Valid @RequestBody final FlightKeysDto keys) {
         return flightService.deleteFlight(keys);
     }
+
 }

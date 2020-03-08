@@ -2,7 +2,7 @@ package com.shpl.flightbooking.flight.mapper;
 
 import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
 import com.shpl.flightbooking.flight.dto.FlightPushDto;
-import com.shpl.flightbooking.flight.model.Flight;
+import com.shpl.flightbooking.flight.entity.Flight;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
