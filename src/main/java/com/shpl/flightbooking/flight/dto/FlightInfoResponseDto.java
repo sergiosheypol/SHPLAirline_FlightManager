@@ -1,4 +1,4 @@
-package com.shpl.flightbooking.dto;
+package com.shpl.flightbooking.flight.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlightPushDto {
+public class FlightInfoResponseDto {
     private String id;
     private String iataCode;
     private String departureAirport;
@@ -19,4 +19,6 @@ public class FlightPushDto {
     private String connectingAirport;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
+    private int totalSeatsAvailable;
+    private int soldSeats;
 }

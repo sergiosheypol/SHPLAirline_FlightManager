@@ -1,4 +1,4 @@
-package com.shpl.flightbooking.model;
+package com.shpl.flightbooking.flight.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;

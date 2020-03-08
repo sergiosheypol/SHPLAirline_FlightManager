@@ -3,9 +3,10 @@ package com.shpl.flightbooking.ITtests;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.shpl.flightbooking.FlightbookingApplication;
 import com.shpl.flightbooking.config.AwsDynamoDBTestConfig;
-import com.shpl.flightbooking.controller.FlightController;
-import com.shpl.flightbooking.dto.FlightInfoResponseDto;
-import com.shpl.flightbooking.dto.FlightPushDto;
+import com.shpl.flightbooking.config.AwsDynamoDBTestUtils;
+import com.shpl.flightbooking.flight.controller.FlightController;
+import com.shpl.flightbooking.flight.dto.FlightInfoResponseDto;
+import com.shpl.flightbooking.flight.dto.FlightPushDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,41 +31,56 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @AutoConfigureWebTestClient
 public class FlightControllerITTest {
 
+    private final static String PUSH_ENDPOINT = "/flight/pushFlight";
+    private final static String GET_ENDPOINT = "/flight/getFlight";
+    private final static String UPDATE_ENDPOINT = "/flight/updateFlight";
+    private final static String DELETE_ENDPOINT = "/flight/deleteFlight";
+
     @Autowired
     AmazonDynamoDB dynamoDB;
     @Autowired
     private WebTestClient webTestClient;
 
+    @Autowired
+    private AwsDynamoDBTestUtils awsDynamoDBTestUtils;
+
     @Before
     public void setUp() {
-        AwsDynamoDBTestConfig.loadTables(dynamoDB);
-        AwsDynamoDBTestConfig.loadTestFlight(dynamoDB);
+        awsDynamoDBTestUtils.loadTables(dynamoDB);
+        awsDynamoDBTestUtils.loadTestFlight(dynamoDB);
     }
 
     @After
     public void tearDown() {
-        AwsDynamoDBTestConfig.resetTables(dynamoDB);
+        awsDynamoDBTestUtils.resetTables(dynamoDB);
     }
 
     @Test
     public void shouldCreateFlight() {
-        this.webTestClient
+        FlightInfoResponseDto responseBody = this.webTestClient
                 .post()
-                .uri("/flight/pushFlight")
+                .uri(PUSH_ENDPOINT)
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(Mono.just(FlightControllerData.testFlight), FlightPushDto.class)
+                .body(Mono.just(FlightControllerData.testFlight2), FlightPushDto.class)
                 .exchange()
                 .expectStatus()
-                .isCreated();
+                .isCreated()
+                .expectBody(FlightInfoResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight2.getId());
+        assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight2.getIataCode());
+        assertThat(responseBody.getSoldSeats()).isEqualTo(0);
+        assertThat(responseBody.getTotalSeatsAvailable()).isEqualTo(198);
     }
 
     @Test
     public void shouldGetFlight() {
-
         FlightInfoResponseDto responseBody = this.webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flight/getFlight")
+                        .path(GET_ENDPOINT)
                         .queryParam("id", FlightControllerData.testFlight.getId())
                         .queryParam("iataCode", FlightControllerData.testFlight.getIataCode())
                         .build())
@@ -74,8 +90,6 @@ public class FlightControllerITTest {
                 .getResponseBody();
 
         assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight.getId());
-
-
     }
 
     @Test
@@ -83,7 +97,7 @@ public class FlightControllerITTest {
         FlightInfoResponseDto responseBody = this.webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/flight/getFlight")
+                        .path(GET_ENDPOINT)
                         .queryParam("id", "nooooo")
                         .queryParam("iataCode", "reerterter")
                         .build())
@@ -112,5 +126,105 @@ public class FlightControllerITTest {
                 .exchange()
                 .expectStatus()
                 .isNotFound();
+    }
+
+    @Test
+    public void shouldReturn400WhenEmptyKeys() {
+        this.webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(GET_ENDPOINT)
+                        .queryParam("id", FlightControllerData.wrongKey.getId())
+                        .queryParam("iataCode", FlightControllerData.wrongKey.getIataCode())
+                        .build())
+                .exchange()
+                .expectStatus()
+                .isBadRequest();
+    }
+
+    @Test
+    public void shouldUpdateFlight() {
+
+        FlightPushDto updatedFlight = FlightControllerData.testFlight;
+
+        String newIataCode = "FRE456";
+        String newArrivalAirport = "STN";
+
+        updatedFlight.setIataCode(newIataCode);
+        updatedFlight.setArrivalAirport(newArrivalAirport);
+
+        FlightInfoResponseDto responseBody = this.webTestClient
+                .post()
+                .uri(UPDATE_ENDPOINT)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(Mono.just(updatedFlight), FlightPushDto.class)
+                .exchange()
+                .expectStatus()
+                .isAccepted()
+                .expectBody(FlightInfoResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(responseBody.getIataCode()).isEqualTo(newIataCode);
+        assertThat(responseBody.getArrivalAirport()).isEqualTo(newArrivalAirport);
+    }
+
+    @Test
+    public void shouldCreateFlightIfNotExists() {
+        FlightInfoResponseDto responseBody = this.webTestClient
+                .post()
+                .uri(UPDATE_ENDPOINT)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(Mono.just(FlightControllerData.testFlight2), FlightPushDto.class)
+                .exchange()
+                .expectStatus()
+                .isAccepted()
+                .expectBody(FlightInfoResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight2.getId());
+        assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight2.getIataCode());
+        assertThat(responseBody.getSoldSeats()).isEqualTo(0);
+        assertThat(responseBody.getTotalSeatsAvailable()).isEqualTo(198);
+    }
+
+    @Test
+    public void shouldDeleteFlight() {
+        FlightInfoResponseDto responseBody = this.webTestClient
+                .post()
+                .uri(DELETE_ENDPOINT)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(Mono.just(FlightControllerData.testFlight), FlightPushDto.class)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(FlightInfoResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight.getId());
+        assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight.getIataCode());
+
+        FlightInfoResponseDto emptyResponse = this.webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(GET_ENDPOINT)
+                        .queryParam("id", FlightControllerData.testFlight.getId())
+                        .queryParam("iataCode", FlightControllerData.testFlight.getIataCode())
+                        .build())
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(FlightInfoResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(emptyResponse.getId()).isNull();
+        assertThat(emptyResponse.getIataCode()).isNull();
+        assertThat(emptyResponse.getSoldSeats()).isEqualTo(0);
+        assertThat(emptyResponse.getTotalSeatsAvailable()).isEqualTo(0);
+
+
     }
 }

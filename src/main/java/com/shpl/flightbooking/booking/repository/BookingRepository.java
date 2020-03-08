@@ -1,4 +1,4 @@
-//package com.shpl.flightbooking.repository;
+//package com.shpl.flightbooking.flight.repository;
 //
 //import com.shpl.flightbooking.entity.BookingEntity;
 //import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
