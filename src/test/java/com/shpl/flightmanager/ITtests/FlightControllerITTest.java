@@ -34,7 +34,7 @@ public class FlightControllerITTest {
 
     private final static String PUSH_ENDPOINT = "/flight/pushFlight";
     private final static String GET_ENDPOINT = "/flight/getFlight";
-    private final static String UPDATE_ENDPOINT = "/flight/updateFlight";
+    private final static String UPDATE_ENDPOINT = "/flight/updateFlightDetails";
     private final static String DELETE_ENDPOINT = "/flight/deleteFlight";
     private final static String AVAILABLE_SEATS_ENDPOINT = "/flight/availableSeats/{iataCode}/{flightId}";
 

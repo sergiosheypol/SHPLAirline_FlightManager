@@ -11,11 +11,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 
 import java.util.List;
 
 @Data
 @Builder
+@With
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamoDBTable(tableName = "SHPL_FLIGHTS")
@@ -48,10 +50,15 @@ public class Flight {
     @DynamoDBAttribute
     private int soldSeats;
 
+    private Passengers passengers;
+
     @DynamoDBDocument
     @Getter
     @Setter
+    @Builder
     public static class Passengers {
+
+        @DynamoDBAttribute(attributeName = "passengersPnr")
         private List<String> passengersPnr;
     }
 

@@ -1,5 +1,6 @@
 package com.shpl.flightmanager.controller;
 
+import com.shpl.flightmanager.dto.FlightBookingResult;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightKeysDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
@@ -34,11 +35,18 @@ public class FlightController {
         return flightService.saveFlight(flightPushDto);
     }
 
-    @PostMapping("/updateFlight")
+    @PostMapping("/updateFlightDetails")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public Mono<FlightInfoResponseDto> updateFlight(@Valid @RequestBody FlightPushDto flightPushDto) {
+    public Mono<FlightInfoResponseDto> updateFlightDetails(@Valid @RequestBody FlightPushDto flightPushDto) {
         return flightService.saveFlight(flightPushDto);
+    }
+
+    @PostMapping("/saveNewBooking")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
+    public Mono<FlightBookingResult> saveNewBooking(@Valid @RequestBody FlightKeysDto flightKeysDto) {
+        return flightService.saveNewBooking(flightKeysDto);
     }
 
     @GetMapping(value = "/getFlight", produces = MediaType.APPLICATION_JSON_VALUE)
