@@ -52,4 +52,8 @@ public class AwsDynamoDBTestUtils {
     public void loadFullFlight(AmazonDynamoDB dynamoDB) {
         mapper.save(flightMapper.flightDtoToFlight(FlightControllerData.fullFlight));
     }
+
+    public void loadFlightTest2(AmazonDynamoDB dynamoDB) {
+        mapper.save(flightMapper.flightDtoToFlight(FlightControllerData.testFlight158Sold));
+    }
 }

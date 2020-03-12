@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FlightService {
@@ -62,20 +64,16 @@ public class FlightService {
 
         return Option.of(flight)
                 .map(flightMap -> flightMap.withSoldSeats(flight.getSoldSeats() + 1))
-                .map(flightMap -> flightMap.withPassengers(addPnrToFlight(flightMap.getPassengers(), pnr)))
+                .map(flightMap -> flightMap.withPassengersPnr(addPnrToFlight(flightMap.getPassengersPnr(), pnr)))
                 .map(flightRepository::saveOrUpdate)
                 .map(__ -> getConfirmedBooking(pnr))
                 .get();
     }
 
-    private Flight.Passengers addPnrToFlight(Flight.Passengers passengers, String pnr) {
+    private List<String> addPnrToFlight(List<String> passengers, String pnr) {
         return Option.of(passengers)
-                .peek(passengersMap -> passengersMap.getPassengersPnr().add(pnr))
-                .getOrElse(createPassengersList(pnr));
-    }
-
-    private Flight.Passengers createPassengersList(String pnr) {
-        return Flight.Passengers.builder().passengersPnr(Lists.newArrayList(pnr)).build();
+                .peek(__ -> passengers.add(pnr))
+                .getOrElse(Lists.newArrayList(pnr));
     }
 
     private FlightBookingResult getConfirmedBooking(String pnr) {

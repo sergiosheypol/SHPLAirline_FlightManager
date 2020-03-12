@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Component
 public class FlightMapper {
@@ -42,13 +41,10 @@ public class FlightMapper {
                 .arrivalAirport(flightDto.getArrivalAirport())
                 .arrivalDate(flightDto.getArrivalDate().toString())
                 .departureDate(flightDto.getDepartureDate().toString())
-                .passengers(listToPassengers(flightDto.getPassengersPnr()))
+                .passengersPnr(flightDto.getPassengersPnr())
                 .build();
     }
 
-    public Flight.Passengers listToPassengers(List<String> passengersList) {
-        return Flight.Passengers.builder().passengersPnr(passengersList).build();
-    }
 
 
     //TODO: add PNR list
@@ -76,6 +72,18 @@ public class FlightMapper {
                 .iataCode(flight.getIataCode())
                 .id(flight.getId())
                 .build();
+    }
+
+    public Flight updateFlight(FlightPushDto flightPushDto, Flight flight) {
+        return flight
+                .withId(flightPushDto.getId())
+                .withIataCode(flightPushDto.getIataCode())
+                .withArrivalAirport(flightPushDto.getArrivalAirport())
+                .withDepartureAirport(flightPushDto.getDepartureAirport())
+                .withArrivalDate(flightPushDto.getDepartureDate().toString())
+                .withDepartureDate(flightPushDto.getDepartureDate().toString())
+                .withConnectingAirport(flightPushDto.getConnectingAirport());
+
     }
 
     public FlightRemainingSeats flightToFlightRemainingSeats(Flight flight) {

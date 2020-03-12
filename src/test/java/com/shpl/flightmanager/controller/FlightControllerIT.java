@@ -5,6 +5,7 @@ import com.shpl.flightmanager.FlightbookingApplication;
 import com.shpl.flightmanager.config.AwsDynamoDBTestConfig;
 import com.shpl.flightmanager.config.AwsDynamoDBTestUtils;
 import com.shpl.flightmanager.dto.*;
+import com.shpl.flightmanager.service.PnrService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class FlightControllerIT {
 
     private final static String PUSH_ENDPOINT = "/flight/pushFlight";
-    private final static String GET_ENDPOINT = "/flight/getFlight";
-    private final static String UPDATE_ENDPOINT = "/flight/updateFlightDetails";
+    private final static String GET_ENDPOINT = "/flight/getFlight/{iataCode}/{flightId}";
     private final static String DELETE_ENDPOINT = "/flight/deleteFlight";
     private final static String AVAILABLE_SEATS_ENDPOINT = "/flight/availableSeats/{iataCode}/{flightId}";
     private final static String NEW_BOOKING_ENDPOINT = "/flight/saveNewBooking";
@@ -44,11 +44,15 @@ public class FlightControllerIT {
     @Autowired
     private AwsDynamoDBTestUtils awsDynamoDBTestUtils;
 
+    @Autowired
+    private PnrService pnrService;
+
     @Before
     public void setUp() {
         awsDynamoDBTestUtils.loadTables(dynamoDB);
         awsDynamoDBTestUtils.loadTestFlight(dynamoDB);
         awsDynamoDBTestUtils.loadFullFlight(dynamoDB);
+        awsDynamoDBTestUtils.loadFlightTest2(dynamoDB);
     }
 
     @After
@@ -78,11 +82,7 @@ public class FlightControllerIT {
     public void shouldGetFlight() {
         FlightInfoResponseDto responseBody = this.webTestClient
                 .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(GET_ENDPOINT)
-                        .queryParam("id", FlightControllerData.testFlight.getId())
-                        .queryParam("iataCode", FlightControllerData.testFlight.getIataCode())
-                        .build())
+                .uri(GET_ENDPOINT, FlightControllerData.testFlight.getIataCode(), FlightControllerData.testFlight.getId())
                 .exchange()
                 .expectBody(FlightInfoResponseDto.class)
                 .returnResult()
@@ -95,11 +95,7 @@ public class FlightControllerIT {
     public void shouldGetNullObjectWhenUnexistingFlight() {
         FlightInfoResponseDto responseBody = this.webTestClient
                 .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(GET_ENDPOINT)
-                        .queryParam("id", "nooooo")
-                        .queryParam("iataCode", "reerterter")
-                        .build())
+                .uri(GET_ENDPOINT, "nooooo", "reerterter")
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
@@ -126,65 +122,6 @@ public class FlightControllerIT {
     }
 
     @Test
-    public void shouldReturn400WhenEmptyKeys() {
-        this.webTestClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(GET_ENDPOINT)
-                        .queryParam("id", FlightControllerData.wrongKey.getId())
-                        .queryParam("iataCode", FlightControllerData.wrongKey.getIataCode())
-                        .build())
-                .exchange()
-                .expectStatus()
-                .isBadRequest();
-    }
-
-    @Test
-    public void shouldUpdateFlight() {
-
-        FlightPushDto updatedFlight = FlightControllerData.testFlight;
-
-        String newIataCode = "FRE456";
-        String newArrivalAirport = "STN";
-
-        updatedFlight.setIataCode(newIataCode);
-        updatedFlight.setArrivalAirport(newArrivalAirport);
-
-        FlightInfoResponseDto responseBody = this.webTestClient
-                .post()
-                .uri(UPDATE_ENDPOINT)
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(Mono.just(updatedFlight), FlightPushDto.class)
-                .exchange()
-                .expectStatus()
-                .isAccepted()
-                .expectBody(FlightInfoResponseDto.class)
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(responseBody.getIataCode()).isEqualTo(newIataCode);
-        assertThat(responseBody.getArrivalAirport()).isEqualTo(newArrivalAirport);
-    }
-
-    @Test
-    public void shouldCreateFlightIfNotExists() {
-        FlightInfoResponseDto responseBody = this.webTestClient
-                .post()
-                .uri(UPDATE_ENDPOINT)
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(Mono.just(FlightControllerData.testFlight2), FlightPushDto.class)
-                .exchange()
-                .expectStatus()
-                .isAccepted()
-                .expectBody(FlightInfoResponseDto.class)
-                .returnResult()
-                .getResponseBody();
-
-        assertThat(responseBody.getId()).isEqualTo(FlightControllerData.testFlight2.getId());
-        assertThat(responseBody.getIataCode()).isEqualTo(FlightControllerData.testFlight2.getIataCode());
-    }
-
-    @Test
     public void shouldDeleteFlight() {
         FlightInfoResponseDto responseBody = this.webTestClient
                 .post()
@@ -203,11 +140,9 @@ public class FlightControllerIT {
 
         FlightInfoResponseDto emptyResponse = this.webTestClient
                 .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(GET_ENDPOINT)
-                        .queryParam("id", FlightControllerData.testFlight.getId())
-                        .queryParam("iataCode", FlightControllerData.testFlight.getIataCode())
-                        .build())
+                .uri(GET_ENDPOINT,
+                        FlightControllerData.testFlight.getIataCode(),
+                        FlightControllerData.testFlight.getId())
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
@@ -239,7 +174,7 @@ public class FlightControllerIT {
     }
 
     @Test
-    public void shouldReturnFullFlight() {
+    public void shouldReturnNoSeatsFlight() {
         FlightRemainingSeats flightRemainingSeats = this.webTestClient
                 .get()
                 .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.fullFlight.getIataCode(),
@@ -258,6 +193,7 @@ public class FlightControllerIT {
 
     @Test
     public void shouldCreateNewReservation() {
+
         FlightBookingResult bookingResult = this.webTestClient
                 .post()
                 .uri(NEW_BOOKING_ENDPOINT)
@@ -272,5 +208,20 @@ public class FlightControllerIT {
                 .getResponseBody();
 
         assertThat(bookingResult.getFlightBookingStatus()).isEqualTo(FlightBookingStatus.CONFIRMED);
+        assertThat(pnrService.validatePnr(bookingResult.getPnr())).isTrue();
+
+        FlightRemainingSeats flightRemainingSeats = this.webTestClient
+                .post()
+                .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.testFlight.getIataCode(), FlightControllerData.testFlight.getId())
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .exchange()
+                .expectBody(FlightRemainingSeats.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(flightRemainingSeats.getSoldSeats()).isEqualTo(1);
+        assertThat(flightRemainingSeats.isAdmitsNewBookings()).isTrue();
+
+
     }
 }

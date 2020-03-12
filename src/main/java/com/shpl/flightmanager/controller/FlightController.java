@@ -1,22 +1,11 @@
 package com.shpl.flightmanager.controller;
 
-import com.shpl.flightmanager.dto.FlightBookingResult;
-import com.shpl.flightmanager.dto.FlightInfoResponseDto;
-import com.shpl.flightmanager.dto.FlightKeysDto;
-import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.*;
 import com.shpl.flightmanager.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -35,13 +24,6 @@ public class FlightController {
         return flightService.saveFlight(flightPushDto);
     }
 
-    @PostMapping("/updateFlightDetails")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @ResponseBody
-    public Mono<FlightInfoResponseDto> updateFlightDetails(@Valid @RequestBody FlightPushDto flightPushDto) {
-        return flightService.saveFlight(flightPushDto);
-    }
-
     @PostMapping("/saveNewBooking")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
@@ -49,10 +31,11 @@ public class FlightController {
         return flightService.saveNewBooking(flightKeysDto);
     }
 
-    @GetMapping(value = "/getFlight", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getFlight/{iataCode}/{flightId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Mono<FlightInfoResponseDto> getFlight(@Valid final FlightKeysDto keys) {
-        return flightService.findFlight(keys);
+    public Mono<FlightInfoResponseDto> getFlight(@PathVariable("iataCode") final String iataCode,
+                                                 @PathVariable("flightId") final String flightId) {
+        return flightService.findFlight(FlightKeysDto.builder().iataCode(iataCode).id(flightId).build());
     }
 
     @PostMapping("/deleteFlight")
