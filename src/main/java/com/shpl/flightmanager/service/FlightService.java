@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,13 +46,17 @@ public class FlightService {
                 .filter(this::checkIfAvailableSeats)
                 .map(this::saveBooking)
                 .defaultIfEmpty(getUnconfirmedBooking());
-
     }
 
     public Mono<FlightRemainingSeats> getBookingInfo(FlightKeysDto keys) {
         return flightRepository.find(keys)
                 .map(flightMapper::flightToFlightRemainingSeats)
                 .defaultIfEmpty(FlightRemainingSeats.builder().build());
+    }
+
+    public Mono<FlightExistsDto> isFlightAvailable(FlightKeysDto flightKeysDto) {
+        return flightRepository.find(flightKeysDto)
+                .map(flight -> FlightExistsDto.builder().isFlightAvailable(Optional.ofNullable(flight).isPresent()).build());
     }
 
     private boolean checkIfAvailableSeats(Flight flight) {

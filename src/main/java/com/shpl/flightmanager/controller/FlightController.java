@@ -53,5 +53,13 @@ public class FlightController {
         return flightService.getBookingInfo(FlightKeysDto.builder().iataCode(iataCode).id(flightId).build());
     }
 
+    @GetMapping("/isFlightAvailable/{iataCode}/{flightId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Mono<FlightExistsDto> isFlightAvailable(@PathVariable("iataCode") final String iataCode,
+                                                   @PathVariable("flightId") final String flightId) {
+        return flightService.isFlightAvailable(FlightKeysDto.builder().iataCode(iataCode).id(flightId).build());
+    }
+
 
 }
