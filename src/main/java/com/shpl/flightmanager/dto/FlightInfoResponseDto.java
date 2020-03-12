@@ -19,5 +19,4 @@ public class FlightInfoResponseDto {
     private String connectingAirport;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
-
 }

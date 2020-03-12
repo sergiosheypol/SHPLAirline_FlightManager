@@ -1,4 +1,4 @@
-package com.shpl.flightmanager.ITtests;
+package com.shpl.flightmanager.controller;
 
 import com.shpl.flightmanager.dto.FlightDto;
 import com.shpl.flightmanager.dto.FlightPushDto;

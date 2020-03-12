@@ -2,12 +2,8 @@ package com.shpl.flightmanager.config;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
-import com.shpl.flightmanager.ITtests.FlightControllerData;
+import com.amazonaws.services.dynamodbv2.model.*;
+import com.shpl.flightmanager.controller.FlightControllerData;
 import com.shpl.flightmanager.mapper.FlightMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

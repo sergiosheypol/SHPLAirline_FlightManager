@@ -1,10 +1,9 @@
-package com.shpl.flightmanager.ITtests;
+package com.shpl.flightmanager.controller;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.shpl.flightmanager.FlightbookingApplication;
 import com.shpl.flightmanager.config.AwsDynamoDBTestConfig;
 import com.shpl.flightmanager.config.AwsDynamoDBTestUtils;
-import com.shpl.flightmanager.controller.FlightController;
 import com.shpl.flightmanager.dto.*;
 import org.junit.After;
 import org.junit.Before;
@@ -28,7 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AwsDynamoDBTestConfig.class)
 @AutoConfigureWebTestClient
-public class FlightControllerITTest {
+public class FlightControllerIT {
 
     private final static String PUSH_ENDPOINT = "/flight/pushFlight";
     private final static String GET_ENDPOINT = "/flight/getFlight";
