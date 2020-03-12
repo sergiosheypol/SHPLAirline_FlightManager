@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class FlightMapper {
@@ -41,7 +42,12 @@ public class FlightMapper {
                 .arrivalAirport(flightDto.getArrivalAirport())
                 .arrivalDate(flightDto.getArrivalDate().toString())
                 .departureDate(flightDto.getDepartureDate().toString())
+                .passengers(listToPassengers(flightDto.getPassengersPnr()))
                 .build();
+    }
+
+    public Flight.Passengers listToPassengers(List<String> passengersList) {
+        return Flight.Passengers.builder().passengersPnr(passengersList).build();
     }
 
 

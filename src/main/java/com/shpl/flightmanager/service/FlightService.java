@@ -1,18 +1,14 @@
 package com.shpl.flightmanager.service;
 
-import com.shpl.flightmanager.dto.FlightBookingResult;
-import com.shpl.flightmanager.dto.FlightBookingStatus;
-import com.shpl.flightmanager.dto.FlightInfoResponseDto;
-import com.shpl.flightmanager.dto.FlightKeysDto;
-import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.google.common.collect.Lists;
+import com.shpl.flightmanager.dto.*;
 import com.shpl.flightmanager.entity.Flight;
 import com.shpl.flightmanager.mapper.FlightMapper;
 import com.shpl.flightmanager.repository.FlightRepository;
+import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +19,6 @@ public class FlightService {
     private final FlightMapper flightMapper;
 
     private final PnrService pnrService;
-
 
     public Mono<FlightInfoResponseDto> saveFlight(FlightPushDto flightPushDto) {
         return flightRepository.saveOrUpdate(flightMapper.flightPushDtoToFlight(flightPushDto))
@@ -46,8 +41,8 @@ public class FlightService {
     public Mono<FlightBookingResult> saveNewBooking(FlightKeysDto flightKeysDto) {
         return flightRepository.find(flightKeysDto)
                 .filter(this::checkIfAvailableSeats)
-                .map(this::increaseSoldSeats)
-                .map(this::saveBooking);
+                .map(this::saveBooking)
+                .defaultIfEmpty(getUnconfirmedBooking());
 
     }
 
@@ -61,22 +56,34 @@ public class FlightService {
         return flight.getTotalSeatsAvailable() > flight.getSoldSeats();
     }
 
-    private Flight increaseSoldSeats(Flight flight) {
-        return flight.withSoldSeats(flight.getSoldSeats() + 1);
-    }
-
     private FlightBookingResult saveBooking(Flight flight) {
 
         String pnr = pnrService.generatePnr();
 
-        flight.getPassengers().getPassengersPnr().add(pnr);
+        return Option.of(flight)
+                .map(flightMap -> flightMap.withSoldSeats(flight.getSoldSeats() + 1))
+                .map(flightMap -> flightMap.withPassengers(addPnrToFlight(flightMap.getPassengers(), pnr)))
+                .map(flightRepository::saveOrUpdate)
+                .map(__ -> getConfirmedBooking(pnr))
+                .get();
+    }
 
-        flightRepository.saveOrUpdate(flight);
+    private Flight.Passengers addPnrToFlight(Flight.Passengers passengers, String pnr) {
+        return Option.of(passengers)
+                .peek(passengersMap -> passengersMap.getPassengersPnr().add(pnr))
+                .getOrElse(createPassengersList(pnr));
+    }
 
-        return FlightBookingResult.builder()
-                .flightBookingStatus(FlightBookingStatus.CONFIRMED)
-                .pnr(pnr)
-                .build();
+    private Flight.Passengers createPassengersList(String pnr) {
+        return Flight.Passengers.builder().passengersPnr(Lists.newArrayList(pnr)).build();
+    }
+
+    private FlightBookingResult getConfirmedBooking(String pnr) {
+        return FlightBookingResult.builder().flightBookingStatus(FlightBookingStatus.CONFIRMED).pnr(pnr).build();
+    }
+
+    private FlightBookingResult getUnconfirmedBooking() {
+        return FlightBookingResult.builder().flightBookingStatus(FlightBookingStatus.REFUSED).build();
     }
 
 

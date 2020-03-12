@@ -5,9 +5,7 @@ import com.shpl.flightmanager.FlightbookingApplication;
 import com.shpl.flightmanager.config.AwsDynamoDBTestConfig;
 import com.shpl.flightmanager.config.AwsDynamoDBTestUtils;
 import com.shpl.flightmanager.controller.FlightController;
-import com.shpl.flightmanager.dto.FlightInfoResponseDto;
-import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +35,7 @@ public class FlightControllerITTest {
     private final static String UPDATE_ENDPOINT = "/flight/updateFlightDetails";
     private final static String DELETE_ENDPOINT = "/flight/deleteFlight";
     private final static String AVAILABLE_SEATS_ENDPOINT = "/flight/availableSeats/{iataCode}/{flightId}";
+    private final static String NEW_BOOKING_ENDPOINT = "/flight/saveNewBooking";
 
     @Autowired
     AmazonDynamoDB dynamoDB;
@@ -242,8 +241,6 @@ public class FlightControllerITTest {
 
     @Test
     public void shouldReturnFullFlight() {
-
-
         FlightRemainingSeats flightRemainingSeats = this.webTestClient
                 .get()
                 .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.fullFlight.getIataCode(),
@@ -258,5 +255,23 @@ public class FlightControllerITTest {
         assertThat(flightRemainingSeats.getSoldSeats()).isEqualTo(198);
         assertThat(flightRemainingSeats.getTotalSeatsAvailable()).isEqualTo(198);
         assertThat(flightRemainingSeats.isAdmitsNewBookings()).isFalse();
+    }
+
+    @Test
+    public void shouldCreateNewReservation() {
+        FlightBookingResult bookingResult = this.webTestClient
+                .post()
+                .uri(NEW_BOOKING_ENDPOINT)
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .body(Mono.just(FlightKeysDto.builder()
+                        .iataCode(FlightControllerData.testFlight.getIataCode())
+                        .id(FlightControllerData.testFlight.getId())
+                        .build()), FlightKeysDto.class)
+                .exchange()
+                .expectBody(FlightBookingResult.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(bookingResult.getFlightBookingStatus()).isEqualTo(FlightBookingStatus.CONFIRMED);
     }
 }

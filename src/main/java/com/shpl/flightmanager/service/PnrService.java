@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class PnrService {
 
     public String generatePnr() {
-        return "";
+        return "sfgfdfrgre";
     }
 
     public Boolean validatePnr(String pnr) {
