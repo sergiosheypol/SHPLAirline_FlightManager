@@ -224,4 +224,6 @@ public class FlightControllerIT {
 
 
     }
+
+    //TODO: test isFlightAvailable endpoint
 }

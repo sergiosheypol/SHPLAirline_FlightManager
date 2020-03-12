@@ -27,7 +27,7 @@ public class FlightController {
     @PostMapping("/saveNewBooking")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public Mono<FlightBookingResult> saveNewBooking(@Valid @RequestBody FlightKeysDto flightKeysDto) {
+    public Mono<FlightBookingResult> saveNewBooking(@Valid @RequestBody final FlightKeysDto flightKeysDto) {
         return flightService.saveNewBooking(flightKeysDto);
     }
 

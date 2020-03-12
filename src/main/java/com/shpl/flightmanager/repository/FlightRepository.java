@@ -14,19 +14,19 @@ public class FlightRepository {
 
     private final DynamoDBMapper mapper;
 
-    public Mono<Flight> saveOrUpdate(Flight flight) {
+    public Mono<Flight> saveOrUpdate(final Flight flight) {
         return Mono.fromCallable(() -> {
             mapper.save(flight);
             return flight;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    public Mono<Flight> find(FlightKeysDto flightKeysDto) {
+    public Mono<Flight> find(final FlightKeysDto flightKeysDto) {
         return Mono.fromCallable(() -> mapper.load(Flight.class, flightKeysDto.getId(), flightKeysDto.getIataCode()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public Mono<Flight> delete(FlightKeysDto flightKeysDto) {
+    public Mono<Flight> delete(final FlightKeysDto flightKeysDto) {
         return find(flightKeysDto).map(flight -> {
             mapper.delete(flight);
             return flight;

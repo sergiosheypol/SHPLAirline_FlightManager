@@ -23,49 +23,49 @@ public class FlightService {
 
     private final PnrService pnrService;
 
-    public Mono<FlightInfoResponseDto> saveFlight(FlightPushDto flightPushDto) {
+    public Mono<FlightInfoResponseDto> saveFlight(final FlightPushDto flightPushDto) {
         return flightRepository.saveOrUpdate(flightMapper.flightPushDtoToFlight(flightPushDto))
                 .map(flightMapper::flightToFlightInfoResponseDto)
                 .defaultIfEmpty(FlightInfoResponseDto.builder().build());
     }
 
-    public Mono<FlightInfoResponseDto> findFlight(FlightKeysDto flightKeysDto) {
+    public Mono<FlightInfoResponseDto> findFlight(final FlightKeysDto flightKeysDto) {
         return flightRepository.find(flightKeysDto)
                 .map(flightMapper::flightToFlightInfoResponseDto)
                 .defaultIfEmpty(FlightInfoResponseDto.builder().build());
     }
 
-    public Mono<FlightInfoResponseDto> deleteFlight(FlightKeysDto flightKeysDto) {
+    public Mono<FlightInfoResponseDto> deleteFlight(final FlightKeysDto flightKeysDto) {
         return flightRepository.delete(flightKeysDto)
                 .map(flightMapper::flightToFlightInfoResponseDto)
                 .defaultIfEmpty(FlightInfoResponseDto.builder().build());
     }
 
-    public Mono<FlightBookingResult> saveNewBooking(FlightKeysDto flightKeysDto) {
+    public Mono<FlightBookingResult> saveNewBooking(final FlightKeysDto flightKeysDto) {
         return flightRepository.find(flightKeysDto)
                 .filter(this::checkIfAvailableSeats)
                 .map(this::saveBooking)
                 .defaultIfEmpty(getUnconfirmedBooking());
     }
 
-    public Mono<FlightRemainingSeats> getBookingInfo(FlightKeysDto keys) {
+    public Mono<FlightRemainingSeats> getBookingInfo(final FlightKeysDto keys) {
         return flightRepository.find(keys)
                 .map(flightMapper::flightToFlightRemainingSeats)
                 .defaultIfEmpty(FlightRemainingSeats.builder().build());
     }
 
-    public Mono<FlightExistsDto> isFlightAvailable(FlightKeysDto flightKeysDto) {
+    public Mono<FlightExistsDto> isFlightAvailable(final FlightKeysDto flightKeysDto) {
         return flightRepository.find(flightKeysDto)
                 .map(flight -> FlightExistsDto.builder().isFlightAvailable(Optional.ofNullable(flight).isPresent()).build());
     }
 
-    private boolean checkIfAvailableSeats(Flight flight) {
+    private boolean checkIfAvailableSeats(final Flight flight) {
         return flight.getTotalSeatsAvailable() > flight.getSoldSeats();
     }
 
-    private FlightBookingResult saveBooking(Flight flight) {
+    private FlightBookingResult saveBooking(final Flight flight) {
 
-        String pnr = pnrService.generatePnr();
+        final String pnr = pnrService.generatePnr();
 
         return Option.of(flight)
                 .map(flightMap -> flightMap.withSoldSeats(flight.getSoldSeats() + 1))
@@ -75,13 +75,13 @@ public class FlightService {
                 .get();
     }
 
-    private List<String> addPnrToFlight(List<String> passengers, String pnr) {
+    private List<String> addPnrToFlight(final List<String> passengers, final String pnr) {
         return Option.of(passengers)
                 .peek(__ -> passengers.add(pnr))
                 .getOrElse(Lists.newArrayList(pnr));
     }
 
-    private FlightBookingResult getConfirmedBooking(String pnr) {
+    private FlightBookingResult getConfirmedBooking(final String pnr) {
         return FlightBookingResult.builder().flightBookingStatus(FlightBookingStatus.CONFIRMED).pnr(pnr).build();
     }
 
