@@ -1,10 +1,11 @@
 package com.shpl.flightmanager.entity;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -13,36 +14,26 @@ import java.util.List;
 @With
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = "SHPL_FLIGHTS")
+@Document
 public class Flight {
 
-    @DynamoDBHashKey
     private String id;
 
-    @DynamoDBRangeKey
     private String iataCode;
 
-    @DynamoDBAttribute
     private String departureAirport;
 
-    @DynamoDBAttribute
     private String arrivalAirport;
 
-    @DynamoDBAttribute
     private String connectingAirport;
 
-    @DynamoDBAttribute
     private String departureDate;
 
-    @DynamoDBAttribute
     private String arrivalDate;
 
-    @DynamoDBAttribute
     private int totalSeatsAvailable;
 
-    @DynamoDBAttribute
     private int soldSeats;
 
-    @DynamoDBAttribute
     private List<String> passengersPnr;
 }
