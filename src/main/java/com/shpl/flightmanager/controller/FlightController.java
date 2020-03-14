@@ -6,7 +6,7 @@ import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
 import com.shpl.flightmanager.dto.FlightRemainingSeats;
 import com.shpl.flightmanager.service.BookingService;
-import com.shpl.flightmanager.service.FlightService;
+import com.shpl.flightmanager.service.FlightCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ import javax.validation.Valid;
 @RequestMapping("/flight")
 public class FlightController {
 
-    private final FlightService flightService;
+    private final FlightCrudService flightCrudService;
 
     private final BookingService bookingService;
 
@@ -35,7 +35,7 @@ public class FlightController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Mono<FlightInfoResponseDto> pushFlight(@Valid @RequestBody FlightPushDto flightPushDto) {
-        return flightService.saveFlight(flightPushDto);
+        return flightCrudService.saveFlight(flightPushDto);
     }
 
     @PostMapping("/saveNewBooking/{flightId}")
@@ -48,14 +48,14 @@ public class FlightController {
     @GetMapping(value = "/getFlight/{flightId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Mono<FlightInfoResponseDto> getFlight(@PathVariable("flightId") final String flightId) {
-        return flightService.findFlight(flightId);
+        return flightCrudService.findFlight(flightId);
     }
 
     @PostMapping("/deleteFlight/{flightId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Mono<FlightInfoResponseDto> deleteFlight(@PathVariable("flightId") final String flightId) {
-        return flightService.deleteFlight(flightId);
+        return flightCrudService.deleteFlight(flightId);
     }
 
     @GetMapping("/availableSeats/{flightId}")

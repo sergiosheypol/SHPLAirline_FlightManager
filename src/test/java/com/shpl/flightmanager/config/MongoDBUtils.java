@@ -32,16 +32,8 @@ public class MongoDBUtils {
         flightRepository.save(flightMapper.flightPushDtoToFlight(FlightControllerData.testFlight)).block();
     }
 
-    public void createTestFlight2() {
-        flightRepository.save(flightMapper.flightPushDtoToFlight(FlightControllerData.testFlight2)).block();
-    }
-
     public void createFullFlight() {
         flightRepository.save(flightMapper.flightDtoToFlight(FlightControllerData.fullFlight)).block();
-    }
-
-    public void create158PassengersFlight() {
-        flightRepository.save(flightMapper.flightDtoToFlight(FlightControllerData.testFlight158Sold)).block();
     }
 
     public void deleteColletion() {

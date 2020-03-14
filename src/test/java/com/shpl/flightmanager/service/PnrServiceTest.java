@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,12 +18,13 @@ public class PnrServiceTest {
 
     @Test
     public void generatePnr() {
-
-        String pnr = pnrService.generatePnr();
-
-        assertThat(pnr.length()).isEqualTo(6);
-        assertThat(pnr).isUpperCase();
-        System.out.println(pnr);
+        StepVerifier.create(pnrService.generatePnr())
+                .assertNext(pnr -> {
+                    assertThat(pnr.length()).isEqualTo(6);
+                    assertThat(pnr).isUpperCase();
+                    System.out.println(pnr);
+                })
+                .verifyComplete();
     }
 
     @Test
@@ -44,14 +46,37 @@ public class PnrServiceTest {
 
         String pnr7 = "@RTY78";
 
-        assertThat(pnrService.validatePnr(pnr0)).isTrue();
-        assertThat(pnrService.validatePnr(pnr1)).isTrue();
-        assertThat(pnrService.validatePnr(pnr2)).isFalse();
-        assertThat(pnrService.validatePnr(pnr3)).isFalse();
-        assertThat(pnrService.validatePnr(pnr4)).isFalse();
-        assertThat(pnrService.validatePnr(pnr5)).isFalse();
-        assertThat(pnrService.validatePnr(pnr6)).isFalse();
-        assertThat(pnrService.validatePnr(pnr7)).isFalse();
+        StepVerifier.create(pnrService.validatePnr(pnr0))
+                .assertNext(pnr -> assertThat(pnr).isTrue())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr1))
+                .assertNext(pnr -> assertThat(pnr).isTrue())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr2))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr3))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr4))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr5))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr6))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
+
+        StepVerifier.create(pnrService.validatePnr(pnr7))
+                .assertNext(pnr -> assertThat(pnr).isFalse())
+                .verifyComplete();
 
 
     }

@@ -7,9 +7,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @SpringBootApplication
 @EnableReactiveMongoRepositories
 public class FlightbookingApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(FlightbookingApplication.class, args);
 	}
-
 }

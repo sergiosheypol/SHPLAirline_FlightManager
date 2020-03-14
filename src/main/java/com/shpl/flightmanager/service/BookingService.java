@@ -1,6 +1,5 @@
 package com.shpl.flightmanager.service;
 
-
 import com.google.common.collect.Lists;
 import com.shpl.flightmanager.dto.FlightBookingResult;
 import com.shpl.flightmanager.dto.FlightBookingStatus;
@@ -29,13 +28,14 @@ public class BookingService {
 
     public Mono<FlightBookingResult> saveNewBooking(final String flightId) {
 
-        final String pnr = pnrService.generatePnr();
+        final Mono<String> pnr = pnrService.generatePnr();
 
-        return flightRepository.findById(flightId)
-                .filter(this::checkIfAvailableSeats)
-                .flatMap(flight -> saveBooking(flight, pnr))
-                .map(__ -> getConfirmedBooking(pnr))
-                .defaultIfEmpty(getUnconfirmedBooking());
+        return Mono.zip(flightRepository.findById(flightId), pnr)
+                .filter(zip -> checkIfAvailableSeats(zip.getT1()))
+                .map(zip -> updateFlight(zip.getT1(), zip.getT2()))
+                .flatMap(flightRepository::save)
+                .zipWith(pnr)
+                .map(zip -> getConfirmedBooking(zip.getT2()));
     }
 
     public Mono<FlightRemainingSeats> getBookingInfo(final String flightId) {
@@ -46,19 +46,18 @@ public class BookingService {
 
     public Mono<FlightExistsDto> isFlightAvailable(final String flightId) {
         return flightRepository.findById(flightId)
-                .map(flight -> FlightExistsDto.builder().isFlightAvailable(Optional.ofNullable(flight).isPresent()).build());
+                .map(flight -> FlightExistsDto.builder().isFlightAvailable(Optional.ofNullable(flight).isPresent()).build())
+                .defaultIfEmpty(FlightExistsDto.builder().isFlightAvailable(false).build());
     }
 
     private boolean checkIfAvailableSeats(final Flight flight) {
         return flight.getTotalSeatsAvailable() > flight.getSoldSeats();
     }
 
-    private Mono<Flight> saveBooking(final Flight flight, final String pnr) {
-
+    private Flight updateFlight(final Flight flight, final String pnr) {
         return Option.of(flight)
                 .map(flightMap -> flightMap.withSoldSeats(flight.getSoldSeats() + 1))
                 .map(flightMap -> flightMap.withPassengersPnr(addPnrToFlight(flightMap.getPassengersPnr(), pnr)))
-                .map(flightRepository::save)
                 .get();
     }
 

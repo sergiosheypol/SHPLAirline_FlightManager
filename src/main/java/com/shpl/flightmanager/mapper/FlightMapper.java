@@ -45,23 +45,6 @@ public class FlightMapper {
                 .build();
     }
 
-
-
-    //TODO: add PNR list
-    public FlightDto flightToFlightDto(Flight flight) {
-        return FlightDto.builder()
-                .arrivalAirport(flight.getArrivalAirport())
-                .arrivalDate(LocalDateTime.parse(flight.getArrivalDate()))
-                .connectingAirport(flight.getConnectingAirport())
-                .departureAirport(flight.getDepartureAirport())
-                .departureDate(LocalDateTime.parse(flight.getDepartureDate()))
-                .iataCode(flight.getIataCode())
-                .id(flight.getId())
-                .soldSeats(flight.getSoldSeats())
-                .totalSeatsAvailable(flight.getTotalSeatsAvailable())
-                .build();
-    }
-
     public FlightInfoResponseDto flightToFlightInfoResponseDto(Flight flight) {
         return FlightInfoResponseDto.builder()
                 .arrivalAirport(flight.getArrivalAirport())
@@ -72,18 +55,6 @@ public class FlightMapper {
                 .iataCode(flight.getIataCode())
                 .id(flight.getId())
                 .build();
-    }
-
-    public Flight updateFlight(FlightPushDto flightPushDto, Flight flight) {
-        return flight
-                .withId(flightPushDto.getId())
-                .withIataCode(flightPushDto.getIataCode())
-                .withArrivalAirport(flightPushDto.getArrivalAirport())
-                .withDepartureAirport(flightPushDto.getDepartureAirport())
-                .withArrivalDate(flightPushDto.getDepartureDate().toString())
-                .withDepartureDate(flightPushDto.getDepartureDate().toString())
-                .withConnectingAirport(flightPushDto.getConnectingAirport());
-
     }
 
     public FlightRemainingSeats flightToFlightRemainingSeats(Flight flight) {

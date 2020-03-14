@@ -4,6 +4,7 @@ import com.shpl.flightmanager.FlightbookingApplication;
 import com.shpl.flightmanager.config.MongoDBUtils;
 import com.shpl.flightmanager.dto.FlightBookingResult;
 import com.shpl.flightmanager.dto.FlightBookingStatus;
+import com.shpl.flightmanager.dto.FlightExistsDto;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
 import com.shpl.flightmanager.dto.FlightRemainingSeats;
@@ -29,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-//@ContextConfiguration(classes = MongoDBTestConfig.class)
 public class FlightControllerIT {
 
     private final static String PUSH_ENDPOINT = "/flight/pushFlight";
@@ -37,6 +37,7 @@ public class FlightControllerIT {
     private final static String DELETE_ENDPOINT = "/flight/deleteFlight/{flightId}";
     private final static String AVAILABLE_SEATS_ENDPOINT = "/flight/availableSeats/{flightId}";
     private final static String NEW_BOOKING_ENDPOINT = "/flight/saveNewBooking/{flightId}";
+    private final static String AVAILABLE_FLIGHT_ENDPOINT = "/flight/isFlightAvailable/{flightId}";
 
     @Autowired
     private WebTestClient webTestClient;
@@ -198,7 +199,6 @@ public class FlightControllerIT {
                 .getResponseBody();
 
         assertThat(bookingResult.getFlightBookingStatus()).isEqualTo(FlightBookingStatus.CONFIRMED);
-        assertThat(pnrService.validatePnr(bookingResult.getPnr())).isTrue();
 
         FlightRemainingSeats flightRemainingSeats = this.webTestClient
                 .get()
@@ -215,5 +215,34 @@ public class FlightControllerIT {
 
     }
 
-    //TODO: test isFlightAvailable endpoint
+    @Test
+    public void shouldReturnAvailableFlight() {
+        FlightExistsDto flightExistsDto = this.webTestClient
+                .get()
+                .uri(AVAILABLE_FLIGHT_ENDPOINT, FlightControllerData.fullFlight.getId())
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(FlightExistsDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(flightExistsDto.isFlightAvailable()).isTrue();
+    }
+
+    @Test
+    public void shouldReturnNotAvailableFlight() {
+        FlightExistsDto flightExistsDto = this.webTestClient
+                .get()
+                .uri(AVAILABLE_FLIGHT_ENDPOINT, "ererewterter")
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(FlightExistsDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(flightExistsDto.isFlightAvailable()).isFalse();
+    }
+
 }
