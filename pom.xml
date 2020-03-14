@@ -20,12 +20,6 @@
 	</properties>
 
 	<dependencies>
-        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-dynamodb</artifactId>
-			<version>1.11.734</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
 		<dependency>
 			<groupId>io.vavr</groupId>
@@ -58,19 +52,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.derjust</groupId>
-			<artifactId>spring-data-dynamodb</artifactId>
-			<version>5.0.3</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.projectreactor.tools/blockhound -->
-		<dependency>
-			<groupId>io.projectreactor.tools</groupId>
-			<artifactId>blockhound</artifactId>
-			<version>1.0.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -86,12 +67,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 
 		<!--Test-->
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
@@ -101,19 +76,25 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>testcontainers</artifactId>
-			<version>${testcontainers.version}</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.projectreactor.tools/blockhound -->
+		<dependency>
+			<groupId>io.projectreactor.tools</groupId>
+			<artifactId>blockhound</artifactId>
+			<version>1.0.2.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>localstack</artifactId>
-			<version>${testcontainers.version}</version>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 
 	</dependencies>
 
