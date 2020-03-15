@@ -3,7 +3,7 @@ package com.shpl.flightmanager.mapper;
 import com.shpl.flightmanager.dto.FlightDto;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.FlightRemainingSeatsDto;
 import com.shpl.flightmanager.entity.Flight;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -57,8 +57,8 @@ public class FlightMapper {
                 .build();
     }
 
-    public FlightRemainingSeats flightToFlightRemainingSeats(Flight flight) {
-        return FlightRemainingSeats.builder()
+    public FlightRemainingSeatsDto flightToFlightRemainingSeats(Flight flight) {
+        return FlightRemainingSeatsDto.builder()
                 .soldSeats(flight.getSoldSeats())
                 .totalSeatsAvailable(flight.getTotalSeatsAvailable())
                 .admitsNewBookings(flight.getSoldSeats() < flight.getTotalSeatsAvailable())

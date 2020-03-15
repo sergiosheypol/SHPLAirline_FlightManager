@@ -1,10 +1,10 @@
 package com.shpl.flightmanager.service;
 
 import com.google.common.collect.Lists;
-import com.shpl.flightmanager.dto.FlightBookingResult;
+import com.shpl.flightmanager.dto.FlightBookingResultDto;
 import com.shpl.flightmanager.dto.FlightBookingStatus;
 import com.shpl.flightmanager.dto.FlightExistsDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.FlightRemainingSeatsDto;
 import com.shpl.flightmanager.entity.Flight;
 import com.shpl.flightmanager.mapper.FlightMapper;
 import com.shpl.flightmanager.repository.FlightRepository;
@@ -26,7 +26,7 @@ public class BookingService {
 
     private final PnrService pnrService;
 
-    public Mono<FlightBookingResult> saveNewBooking(final String flightId) {
+    public Mono<FlightBookingResultDto> saveNewBooking(final String flightId) {
 
         final Mono<String> pnr = pnrService.generatePnr();
 
@@ -38,10 +38,10 @@ public class BookingService {
                 .map(zip -> getConfirmedBooking(zip.getT2()));
     }
 
-    public Mono<FlightRemainingSeats> getBookingInfo(final String flightId) {
+    public Mono<FlightRemainingSeatsDto> getBookingInfo(final String flightId) {
         return flightRepository.findById(flightId)
                 .map(flightMapper::flightToFlightRemainingSeats)
-                .defaultIfEmpty(FlightRemainingSeats.builder().build());
+                .defaultIfEmpty(FlightRemainingSeatsDto.builder().build());
     }
 
     public Mono<FlightExistsDto> isFlightAvailable(final String flightId) {
@@ -67,12 +67,12 @@ public class BookingService {
                 .getOrElse(Lists.newArrayList(pnr));
     }
 
-    private FlightBookingResult getConfirmedBooking(final String pnr) {
-        return FlightBookingResult.builder().flightBookingStatus(FlightBookingStatus.CONFIRMED).pnr(pnr).build();
+    private FlightBookingResultDto getConfirmedBooking(final String pnr) {
+        return FlightBookingResultDto.builder().flightBookingStatus(FlightBookingStatus.CONFIRMED).pnr(pnr).build();
     }
 
-    private FlightBookingResult getUnconfirmedBooking() {
-        return FlightBookingResult.builder().flightBookingStatus(FlightBookingStatus.REFUSED).build();
+    private FlightBookingResultDto getUnconfirmedBooking() {
+        return FlightBookingResultDto.builder().flightBookingStatus(FlightBookingStatus.REFUSED).build();
     }
 
 }

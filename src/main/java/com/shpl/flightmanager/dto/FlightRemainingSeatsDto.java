@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlightRemainingSeats {
+public class FlightRemainingSeatsDto {
     private int soldSeats;
     private int totalSeatsAvailable;
     private boolean admitsNewBookings;

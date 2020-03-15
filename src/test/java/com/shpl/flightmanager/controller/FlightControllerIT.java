@@ -2,12 +2,12 @@ package com.shpl.flightmanager.controller;
 
 import com.shpl.flightmanager.FlightbookingApplication;
 import com.shpl.flightmanager.config.MongoDBUtils;
-import com.shpl.flightmanager.dto.FlightBookingResult;
+import com.shpl.flightmanager.dto.FlightBookingResultDto;
 import com.shpl.flightmanager.dto.FlightBookingStatus;
 import com.shpl.flightmanager.dto.FlightExistsDto;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.FlightRemainingSeatsDto;
 import com.shpl.flightmanager.service.PnrService;
 import org.junit.Before;
 import org.junit.Test;
@@ -153,64 +153,64 @@ public class FlightControllerIT {
     @Test
     public void shouldReturnAvailableSeats() {
 
-        FlightRemainingSeats flightRemainingSeats = this.webTestClient
+        FlightRemainingSeatsDto flightRemainingSeatsDto = this.webTestClient
                 .get()
                 .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.testFlight.getId())
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
-                .expectBody(FlightRemainingSeats.class)
+                .expectBody(FlightRemainingSeatsDto.class)
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(flightRemainingSeats.getSoldSeats()).isEqualTo(0);
-        assertThat(flightRemainingSeats.getTotalSeatsAvailable()).isEqualTo(198);
-        assertThat(flightRemainingSeats.isAdmitsNewBookings()).isTrue();
+        assertThat(flightRemainingSeatsDto.getSoldSeats()).isEqualTo(0);
+        assertThat(flightRemainingSeatsDto.getTotalSeatsAvailable()).isEqualTo(198);
+        assertThat(flightRemainingSeatsDto.isAdmitsNewBookings()).isTrue();
 
     }
 
     @Test
     public void shouldReturnNoSeatsFlight() {
-        FlightRemainingSeats flightRemainingSeats = this.webTestClient
+        FlightRemainingSeatsDto flightRemainingSeatsDto = this.webTestClient
                 .get()
                 .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.fullFlight.getId())
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
-                .expectBody(FlightRemainingSeats.class)
+                .expectBody(FlightRemainingSeatsDto.class)
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(flightRemainingSeats.getSoldSeats()).isEqualTo(198);
-        assertThat(flightRemainingSeats.getTotalSeatsAvailable()).isEqualTo(198);
-        assertThat(flightRemainingSeats.isAdmitsNewBookings()).isFalse();
+        assertThat(flightRemainingSeatsDto.getSoldSeats()).isEqualTo(198);
+        assertThat(flightRemainingSeatsDto.getTotalSeatsAvailable()).isEqualTo(198);
+        assertThat(flightRemainingSeatsDto.isAdmitsNewBookings()).isFalse();
     }
 
     @Test
     public void shouldCreateNewReservation() {
 
-        FlightBookingResult bookingResult = this.webTestClient
+        FlightBookingResultDto bookingResult = this.webTestClient
                 .post()
                 .uri(NEW_BOOKING_ENDPOINT, FlightControllerData.testFlight.getId())
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .exchange()
-                .expectBody(FlightBookingResult.class)
+                .expectBody(FlightBookingResultDto.class)
                 .returnResult()
                 .getResponseBody();
 
         assertThat(bookingResult.getFlightBookingStatus()).isEqualTo(FlightBookingStatus.CONFIRMED);
 
-        FlightRemainingSeats flightRemainingSeats = this.webTestClient
+        FlightRemainingSeatsDto flightRemainingSeatsDto = this.webTestClient
                 .get()
                 .uri(AVAILABLE_SEATS_ENDPOINT, FlightControllerData.testFlight.getId())
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .exchange()
-                .expectBody(FlightRemainingSeats.class)
+                .expectBody(FlightRemainingSeatsDto.class)
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(flightRemainingSeats.getSoldSeats()).isEqualTo(1);
-        assertThat(flightRemainingSeats.isAdmitsNewBookings()).isTrue();
+        assertThat(flightRemainingSeatsDto.getSoldSeats()).isEqualTo(1);
+        assertThat(flightRemainingSeatsDto.isAdmitsNewBookings()).isTrue();
 
 
     }

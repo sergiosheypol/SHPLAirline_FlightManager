@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FlightBookingResult {
+public class FlightBookingResultDto {
     private FlightBookingStatus flightBookingStatus;
     private String pnr;
 }

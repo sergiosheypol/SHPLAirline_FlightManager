@@ -1,10 +1,10 @@
 package com.shpl.flightmanager.controller;
 
-import com.shpl.flightmanager.dto.FlightBookingResult;
+import com.shpl.flightmanager.dto.FlightBookingResultDto;
 import com.shpl.flightmanager.dto.FlightExistsDto;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
-import com.shpl.flightmanager.dto.FlightRemainingSeats;
+import com.shpl.flightmanager.dto.FlightRemainingSeatsDto;
 import com.shpl.flightmanager.service.BookingService;
 import com.shpl.flightmanager.service.FlightCrudService;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class FlightController {
     @PostMapping("/saveNewBooking/{flightId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public Mono<FlightBookingResult> saveNewBooking(@PathVariable("flightId") final String flightId) {
+    public Mono<FlightBookingResultDto> saveNewBooking(@PathVariable("flightId") final String flightId) {
         return bookingService.saveNewBooking(flightId);
     }
 
@@ -61,7 +61,7 @@ public class FlightController {
     @GetMapping("/availableSeats/{flightId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Mono<FlightRemainingSeats> getBookingInfo(@PathVariable("flightId") final String flightId) {
+    public Mono<FlightRemainingSeatsDto> getBookingInfo(@PathVariable("flightId") final String flightId) {
         return bookingService.getBookingInfo(flightId);
     }
 
