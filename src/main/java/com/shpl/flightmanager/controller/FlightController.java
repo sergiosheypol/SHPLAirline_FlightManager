@@ -5,8 +5,7 @@ import com.shpl.flightmanager.dto.FlightExistsDto;
 import com.shpl.flightmanager.dto.FlightInfoResponseDto;
 import com.shpl.flightmanager.dto.FlightPushDto;
 import com.shpl.flightmanager.dto.FlightRemainingSeatsDto;
-import com.shpl.flightmanager.service.BookingService;
-import com.shpl.flightmanager.service.FlightCrudService;
+import com.shpl.flightmanager.facade.FlightFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,49 +26,47 @@ import javax.validation.Valid;
 @RequestMapping("/flight")
 public class FlightController {
 
-    private final FlightCrudService flightCrudService;
-
-    private final BookingService bookingService;
+    private final FlightFacade flightFacade;
 
     @PostMapping("/pushFlight")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public Mono<FlightInfoResponseDto> pushFlight(@Valid @RequestBody FlightPushDto flightPushDto) {
-        return flightCrudService.saveFlight(flightPushDto);
+        return flightFacade.saveFlight(flightPushDto);
     }
 
     @PostMapping("/saveNewBooking/{flightId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public Mono<FlightBookingResultDto> saveNewBooking(@PathVariable("flightId") final String flightId) {
-        return bookingService.saveNewBooking(flightId);
+        return flightFacade.saveNewBooking(flightId);
     }
 
     @GetMapping(value = "/getFlight/{flightId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Mono<FlightInfoResponseDto> getFlight(@PathVariable("flightId") final String flightId) {
-        return flightCrudService.findFlight(flightId);
+        return flightFacade.findFlight(flightId);
     }
 
     @PostMapping("/deleteFlight/{flightId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Mono<FlightInfoResponseDto> deleteFlight(@PathVariable("flightId") final String flightId) {
-        return flightCrudService.deleteFlight(flightId);
+        return flightFacade.deleteFlight(flightId);
     }
 
     @GetMapping("/availableSeats/{flightId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Mono<FlightRemainingSeatsDto> getBookingInfo(@PathVariable("flightId") final String flightId) {
-        return bookingService.getBookingInfo(flightId);
+        return flightFacade.getBookingInfo(flightId);
     }
 
     @GetMapping("/isFlightAvailable/{flightId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Mono<FlightExistsDto> isFlightAvailable(@PathVariable("flightId") final String flightId) {
-        return bookingService.isFlightAvailable(flightId);
+        return flightFacade.isFlightAvailable(flightId);
     }
 
 
