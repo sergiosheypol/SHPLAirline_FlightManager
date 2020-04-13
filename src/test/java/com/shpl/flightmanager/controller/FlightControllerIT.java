@@ -90,7 +90,7 @@ public class FlightControllerIT {
     public void shouldDeleteFlight() {
 
         FlightInfoResponseDto deleteResponse = this.webTestClient
-                .post()
+                .delete()
                 .uri(DELETE_ENDPOINT, FlightControllerData.testFlight.getId())
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .exchange()
